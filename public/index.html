@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="css/style.css" rel="stylesheet">
+
+  <title>Amazing Online Store</title>
+</head>
+
+<body>
+  <div class="my-banner">The Amazing Online Store</div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item modal-preauth">
+            <button id="menu-signin" class="btn btn-outline-danger" data-bs-toggle="modal"
+              data-bs-target="#modal-signin">Sign In/Up</button>
+          </li>
+          <li class="nav-item">
+            <button id="menu-home" class="btn btn-outline-primary">Home</button>
+          </li>
+          <li class="nav-item modal-postauth">
+            <button id="menu-purchases" class="btn btn-outline-primary">Purchases</button>
+          </li>
+          <li class="nav-item modal-postauth">
+            <button id="menu-signout" class="btn btn-outline-danger">Sign Out</button>
+          </li>
+        </ul>
+        <button id="menu-cart" class="btn btn-outline-success modal-postauth">
+          <img src="images/cart.png" width="30px"> (<span id="menu-cart-item-count">0</span>)
+        </button>
+        <button id="menu-profile" class="btn btn-outline-success modal-postauth">Profile</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal: popup infobox -->
+  <div class="modal fade" id="modal-infobox" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modal-infobox-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-infobox-title">Modal title</h5>
+        </div>
+        <div class="modal-body" id="modal-infobox-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Sign In Form -->
+  <div class="modal fade" id="modal-signin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modal-signin-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-signin-title">Please, Sign In!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-signin" method="post">
+            <div>
+              <input type="email" name="email" required placeholder="Enter email address">
+
+            </div>
+            <div>
+              <input type="password" name="password" required minlength="6" placeholder="Enter Password">
+            </div>
+            <div>
+              <button type="submit" class="btn btn-outline-primary">Sign In</button>
+            </div>
+          </form>
+          <div class="mt-5">
+            No account yet?
+            <button id="button-show-signup-modal" class="btn btn-outline-info">Create New Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Sign Up -->
+  <div class="modal fade" id="modal-signup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="model-signup-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-signup-title">Create New Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="modal-signup-form" method="post">
+            <div>
+              <input type="email" name="email" placeholder="email address" required>
+            </div>
+            <div>
+              <input type="password" name="password" placeholder="password" required minlength="6">
+            </div>
+            <div>
+              <input type="password" name="passwordConfirm" placeholder="confirm password" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-outline-primary">Create</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: form for reviews and comments -->
+  <div class="modal fade" id="modal-create-review" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modal-create-review-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-create-review-label">Reviews & Comments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="comments-section">
+
+          </div>
+          <form id="form-create-review" method="post">
+            <div>
+              <textarea style="width: 100%;" name="content" cols="60" rows="5" placeholder="Comment for the product"
+                required minlength="5"></textarea>
+            </div>
+            <div style="padding: 10px 0; cursor: pointer;" id="ratings-container-1">
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-outline-danger">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: form for reviews and comments -->
+  <div class="modal fade" id="modal-edit-review" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modal-edit-review-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-edit-review-label">Edit Review</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-edit-review" method="post">
+            <div>
+              <textarea style="width: 100%;" name="content" cols="60" rows="5" placeholder="Comment for the product"
+                required minlength="5"></textarea>
+            </div>
+            <div style="padding: 10px 0; cursor: pointer;" id="ratings-container-2">
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+              <span class="fa fa-star"></span>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-outline-danger">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Transaction - purchase history -->
+  <div class="modal fade" id="modal-transaction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modal-transaction-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-transaction-title"></h5>
+        </div>
+        <div class="modal-body" id="modal-transaction-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="root" class="bg-light p-5 m-3"></div>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfoMI2xvjSpQcNIIR7Fpy62owH8ENdUaA",
+      authDomain: "cmsc5373-ramya-webapps.firebaseapp.com",
+      projectId: "cmsc5373-ramya-webapps",
+      storageBucket: "cmsc5373-ramya-webapps.appspot.com",
+      messagingSenderId: "773754794552",
+      appId: "1:773754794552:web:24f91c111dcc895bc62ccd"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    let ratingContainer = document.getElementById("ratings-container-1");
+    let ratingContainer2 = document.getElementById("ratings-container-2");
+    Array.from(ratingContainer.children).map((ele, ind) => {
+      ele.addEventListener("click", e => {
+        if (ind === 0) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer.children[num].className = num === 0 ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 1) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer.children[num].className = (num === 0 || num === 1) ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 2) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer.children[num].className = (num === 0 || num === 1 || num === 2) ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 3) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer.children[num].className = num !== 4 ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 4) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer.children[num].className = "fa fa-star checked"
+          })
+        }
+      })
+    })
+
+    Array.from(ratingContainer2.children).map((ele, ind) => {
+      ele.addEventListener("click", e => {
+        if (ind === 0) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer2.children[num].className = num === 0 ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 1) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer2.children[num].className = (num === 0 || num === 1) ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 2) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer2.children[num].className = (num === 0 || num === 1 || num === 2) ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 3) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer2.children[num].className = num !== 4 ? "fa fa-star checked" : "fa fa-star"
+          })
+        } else if (ind === 4) {
+          [0, 1, 2, 3, 4].forEach(num => {
+            ratingContainer2.children[num].className = "fa fa-star checked"
+          })
+        }
+      })
+    })
+  </script>
+
+  <script type="module" src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</body>
+
+</html>
