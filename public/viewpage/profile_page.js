@@ -1,7 +1,7 @@
 import { MENU, root } from "./elements.js";
 import { ROUTE_PATHNAMES } from "../controller/route.js";
-import { getAccountInfo , updateAccountInfo} from "../controller/firestore_controller.js";
-import { currentUser } from "../controller/firebase_auth.js";
+import { getAccountInfo , updateAccountInfo } from "../controller/firestore_controller.js";
+import { currentUser, changePassword } from "../controller/firebase_auth.js";
 import { info, disableButton,enableButton } from "./util.js";
 import { DEV } from "../model/constants.js";
 import { uploadProfilePhoto } from "../controller/storage_controller.js";
@@ -11,6 +11,18 @@ export function addEventListeners() {
     MENU.Profile.addEventListener('click', async () => {
         history.pushState(null, null, ROUTE_PATHNAMES.PROFILE);
         await profile_page();
+    });
+
+    document.getElementById('form-change-password').addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        if (formData.get('newPassword') !== formData.get('confirmPassword')) return swal("Error!", "Password Mismatch", "error");
+        await changePassword({
+            email: currentUser.email,
+            oldPassword: formData.get('oldPassword'),
+            newPassword: formData.get('newPassword')
+        })
+        e.target.reset()
     });
 }
 
@@ -28,8 +40,9 @@ export async function profile_page() {
         return;
     }
     html += `
-    <div class="alert alert-primary">
+    <div class="alert alert-primary d-flex align-items-center justify-content-between">
     Email: ${currentUser.email} (Cannot change email as a login name)
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-change-password">Update Password</button>
     </div>
     `
     html += `

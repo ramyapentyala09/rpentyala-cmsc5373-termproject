@@ -1,6 +1,6 @@
 import {
     getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
-    createUserWithEmailAndPassword,
+    createUserWithEmailAndPassword, updatePassword, reauthenticateWithCredential, EmailAuthProvider
 } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js"
 
 import * as Elements from '../viewpage/elements.js'
@@ -9,8 +9,6 @@ import { routing, ROUTE_PATHNAMES } from "./route.js";
 import * as Util from '../viewpage/util.js'
 import { initShoppingCart } from "../viewpage/cart_page.js";
 import { readAccountProfile } from "../viewpage/profile_page.js";
-
-
 
 const auth = getAuth();
 export let currentUser = null;
@@ -98,5 +96,17 @@ async function authStateChanged(user) {
         history.pushState(null, null, ROUTE_PATHNAMES.HOME);
         routing(window.location.pathname, window.location.hash);
 
+    }
+}
+
+export async function changePassword(data) {
+    try {
+        const credentials = EmailAuthProvider.credential(data.email, data.oldPassword);
+        await reauthenticateWithCredential(currentUser, credentials);
+        await updatePassword(currentUser, data.newPassword);
+        document.querySelector("#modal-change-password .btn-close").click();
+        swal("Success!", "Password Changed Successfully!", "success");
+    } catch ({ message }) {
+        swal("Error!", message, "error");
     }
 }

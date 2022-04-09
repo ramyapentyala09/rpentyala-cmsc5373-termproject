@@ -109,7 +109,7 @@ async function renderComments(productDet) {
             }
         })
     } else {
-        document.getElementById("comments-section").innerHTML = `<div style="margin-bottom:20px;">No Reviews Yet!</div>`;
+        document.getElementById("comments-section").innerHTML = `<div style="margin-bottom: 20px;">No Reviews Yet!</div>`;
     }
 }
 export async function home_page() {

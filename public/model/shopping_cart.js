@@ -19,13 +19,17 @@ export class ShoppingCart {
             this.items[index].qty++;
         }
     }
-    removeItem(product) {
+    removeItem(product, all = false) {
         // dec qty, or remove the product if qty == 0
         const index = this.items.findIndex(e => product.docId == e.docId);
         if (index >= 0) {
-            --this.items[index].qty;
-            if (this.items[index].qty == 0) {
+            if (all) {
                 this.items.splice(index, 1);
+            } else {
+                --this.items[index].qty;
+                if (this.items[index].qty == 0) {
+                    this.items.splice(index, 1);
+                }
             }
         }
     }
@@ -45,10 +49,10 @@ export class ShoppingCart {
 
     serialize(timestamp) {
         const serializedItems = this.items.map(e => e.serialize());
-        return {uid: this.uid, items: serializedItems, timestamp};
+        return { uid: this.uid, items: serializedItems, timestamp };
     }
 
-    static deserialize(data){
+    static deserialize(data) {
         const sc = new ShoppingCart(data.uid);
         if (data.items && Array.isArray(data.items)) {
             sc.items = data.items.map(e => new Product(e));
