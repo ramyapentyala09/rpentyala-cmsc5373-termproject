@@ -9,6 +9,11 @@ import { cart } from "./cart_page.js";
 let currentProductDetail;
 let editCommentDocId;
 
+let loader = `<div style="text-align: center">
+<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+</div>
+</div>`
+
 export function addEventListeners() {
     MENU.Home.addEventListener('click', async () => {
         history.pushState(null, null, ROUTE_PATHNAMES.HOME);
@@ -16,7 +21,7 @@ export function addEventListeners() {
         await home_page();
         Util.enableButton(MENU.Home, label);
     });
-    
+
     document.getElementById("form-create-review").addEventListener("submit", async e => {
         e.preventDefault();
         let productId = currentProductDetail.split("-")[0]
@@ -60,6 +65,10 @@ export function addEventListeners() {
         swal("Success!", "Review updated successfully!", "success");
         await home_page()
     })
+
+    document.getElementById('searchBtn').addEventListener('click', getProductBySearching)
+    document.getElementById('priceBox').addEventListener('change', getProductByPricing)
+    document.getElementById('priceRange').addEventListener('change', getProductByPricingRange)
 }
 
 async function renderComments(productDet) {
@@ -124,13 +133,15 @@ export async function home_page() {
             });
         }
     } catch (e) {
-        if (DEV) console.log(e);
         Util.info('Failed to get the product list', JSON.stringify(e));
     }
+
     for (let i = 0; i < products.length; i++) {
         html += buildProductView(products[i], i);
     }
     root.innerHTML = html;
+
+    document.getElementById('productView').style.display = 'flex'
 
     const reviewModalBtn = document.getElementsByClassName('review-modal-btn');
     for (let i = 0; i < reviewModalBtn.length; i++) {
@@ -165,6 +176,127 @@ export async function home_page() {
         });
     }
 
+}
+
+function getProductListBySearch(text, productList) {
+
+    return productList.filter(product => product.name.startsWith(text) || product.summary.startsWith(text));
+}
+
+async function getProductBySearching() {
+    let html = '<h1>Enjoy Shopping!</h1>'
+    root.innerHTML = loader
+    let text = document.getElementById('searchBox').value
+
+    let products;
+
+    try {
+        products = await getProductList();
+        if (!!text) {
+            products = products.filter(product => product.name.toLowerCase().startsWith(text.toLowerCase()) || product.summary.toLowerCase().startsWith(text.toLowerCase()));
+        }
+    } catch (e) {
+        if (Constants.DEV) console.log(e);
+        Util.info('Cannot get product List by searching', JSON.stringify(e));
+
+        return;
+
+    }
+    root.innerHTML = ''
+
+    products.forEach((p, ind) => {
+        html += buildProductView(p, ind);
+    });
+
+    document.getElementById('priceRange').disabled = !!text
+    document.getElementById('priceBox').disabled = !!text
+
+    if (!products.length) {
+        root.innerHTML = '<h2>No Products</h2>'
+    } else {
+        root.innerHTML = html
+    }
+}
+
+async function getProductByPricing() {
+    let html = '<h1>Enjoy Shopping!</h1>'
+    root.innerHTML = loader
+    let priceVal = document.getElementById('priceBox').value
+
+    let products;
+
+    try {
+        products = await getProductList();
+        if (!isNaN(priceVal)) {
+            products = products.sort((prodA, prodB) => prodA.price - prodB.price)
+            if (priceVal != 1) {
+                products = products.reverse()
+            }
+        }
+    } catch (e) {
+        Util.info('Cannot get product List by pricing', JSON.stringify(e));
+
+        return;
+
+    }
+    root.innerHTML = ''
+
+    products.forEach((p, ind) => {
+        html += buildProductView(p, ind);
+    });
+
+    document.getElementById('searchBox').value = ''
+    document.getElementById('priceRange').disabled = !isNaN(priceVal)
+
+    if (!products.length) {
+        root.innerHTML = '<h2>No Products</h2>'
+    } else {
+        root.innerHTML = html
+    }
+}
+
+async function getProductByPricingRange() {
+    let html = '<h1>Enjoy Shopping!</h1>'
+    root.innerHTML = loader
+    let priceRangeVal = document.getElementById('priceRange').value
+
+    let products;
+
+    try {
+        products = await getProductList();
+        if (!isNaN(priceRangeVal)) {
+            if (priceRangeVal == 1) {
+                products = products.filter(product => product.price <= 10)
+            } else if (priceRangeVal == 2) {
+                products = products.filter(product => product.price >= 10 && product.price <= 20)
+            } else if (priceRangeVal == 3) {
+                products = products.filter(product => product.price >= 20 && product.price <= 50)
+            } else if (priceRangeVal == 4) {
+                products = products.filter(product => product.price >= 50 && product.price <= 100)
+            } else if (priceRangeVal == 5) {
+                products = products.filter(product => product.price >= 100)
+            }
+        }
+    } catch (e) {
+        Util.info('Cannot get product List by pricing range', JSON.stringify(e));
+
+        return;
+
+    }
+    root.innerHTML = ''
+
+    products.forEach((p, ind) => {
+        html += buildProductView(p, ind);
+    });
+
+    document.getElementById('searchBox').value = ''
+    document.getElementById('priceBox').disabled = !isNaN(priceRangeVal)
+
+    if (!products.length) {
+        root.innerHTML = '<h2>No Products</h2>'
+    } else {
+        root.innerHTML = html
+    }
 }
 
 function buildProductView(product, index) {

@@ -230,6 +230,30 @@
     </div>
   </div>
 
+  <div class="bg-light p-5 m-3" style="align-items: center;display: none;" id="productView">
+    <div class="input-group" style="align-items: center">
+        <div class="form-outline">
+        <input type="search" id="searchBox" class="form-control" placeholder="Search" />
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" style="height: fit-content" id="searchBtn">
+        <i class="fa fa-search"></i>
+        </button>
+    </div>
+    <select class="form-select" style="height: fit-content; width: fit-content; margin-right: 25px" id="priceBox">
+        <option selected>Select Price Order</option>
+        <option value="1">Low To High</option>
+        <option value="2">High To Low</option>
+    </select>
+    <select class="form-select" style="height: fit-content; width: fit-content" id="priceRange">
+        <option selected>Select Price Range</option>
+        <option value="1">0 - 10$</option>
+        <option value="2">10$ - 20$</option>
+        <option value="3">20$ - 50$</option>
+        <option value="4">50$ - 100$</option>
+        <option value="5">100$ +</option>
+    </select>
+    </div>
+
   <div id="root" class="bg-light p-5 m-3"></div>
 
   <script type="module">
