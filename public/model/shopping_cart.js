@@ -55,7 +55,11 @@ export class ShoppingCart {
     static deserialize(data) {
         const sc = new ShoppingCart(data.uid);
         if (data.items && Array.isArray(data.items)) {
-            sc.items = data.items.map(e => new Product(e));
+            sc.items = data.items.map(e => {
+               let p = new Product(e)
+               p.set_docId(e.docId)
+               return p
+            });
         }
         sc.timestamp = data.timestamp;
         return sc;

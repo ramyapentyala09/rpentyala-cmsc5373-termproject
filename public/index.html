@@ -214,6 +214,27 @@
     </div>
   </div>
 
+  <!-- Modal: Delete User -->
+  <div class="modal fade" id="modal-delete-user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="model-delete-user-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-delete-user-title">Delete Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-delete-user" method="post">
+            <div>
+              <input type="password" name="password" required placeholder="Enter Your Password" minlength="6">
+            </div>
+            <button type="submit" class="btn btn-outline-danger mt-4">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Transaction - purchase history -->
   <div class="modal fade" id="modal-transaction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modal-transaction-title" aria-hidden="true">

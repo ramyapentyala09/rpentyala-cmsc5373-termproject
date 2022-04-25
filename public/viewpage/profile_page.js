@@ -1,7 +1,7 @@
 import { MENU, root } from "./elements.js";
 import { ROUTE_PATHNAMES } from "../controller/route.js";
 import { getAccountInfo , updateAccountInfo } from "../controller/firestore_controller.js";
-import { currentUser, changePassword } from "../controller/firebase_auth.js";
+import { currentUser, changePassword, deleteAccount } from "../controller/firebase_auth.js";
 import { info, disableButton,enableButton } from "./util.js";
 import { DEV } from "../model/constants.js";
 import { uploadProfilePhoto } from "../controller/storage_controller.js";
@@ -10,6 +10,7 @@ export let accountInfo = null;
 export function addEventListeners() {
     MENU.Profile.addEventListener('click', async () => {
         history.pushState(null, null, ROUTE_PATHNAMES.PROFILE);
+        document.getElementById('productView').style.display = 'none'
         await profile_page();
     });
 
@@ -24,6 +25,14 @@ export function addEventListeners() {
         })
         e.target.reset()
     });
+
+    document.getElementById('form-delete-user').addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        await deleteAccount(formData.get('password'))
+        e.target.reset()
+    });
+    
 }
 
 export async function profile_page() {
@@ -41,8 +50,11 @@ export async function profile_page() {
     }
     html += `
     <div class="alert alert-primary d-flex align-items-center justify-content-between">
-    Email: ${currentUser.email} (Cannot change email as a login name)
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-change-password">Update Password</button>
+    <span>Email: ${currentUser.email} (Cannot change email as a login name)</span>
+    <div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-change-password">Update Password</button>
+        <button class="btn btn-danger" style="margin-left: 15px;" data-bs-toggle="modal" data-bs-target="#modal-delete-user">Delete Account</button>
+    </div>
     </div>
     `
     html += `
@@ -151,7 +163,7 @@ export async function profile_page() {
         enableButton(profilePhotoUpdate,label);
     });
 
-    document.getElementById('profile-photo-upload').addEventListener('change',e=>{
+    document.getElementById('profile-photo-upload').addEventListener('change', e=>{
         photoFile = e.target.files[0];
         if(!photoFile){
             document.getElementById('profile-preview-img').src = accountInfo.photoURL;

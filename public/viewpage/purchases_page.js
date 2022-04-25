@@ -7,10 +7,10 @@ import { DEV } from '../model/constants.js';
 import { cart } from './cart_page.js';
 import { modalTransaction } from "./elements.js";
 
-
 export function addEventListeners() {
     MENU.Purchases.addEventListener('click', async () => {
         history.pushState(null, null, ROUTE_PATHNAMES.PURCHASES);
+        document.getElementById('productView').style.display = 'none'
         const label = Util.disableButton(MENU.Purchases);
         await purchases_page();
         Util.enableButton(MENU.Purchases, label);
@@ -83,7 +83,20 @@ export async function purchases_page() {
             modalTransaction.body.innerHTML = buildTransactionView(carts[index]);
             modalTransaction.modal.show();
 
-
+            let buyPurchaseAgainBtns = document.getElementsByClassName('buyPurchaseAgain');
+            for (let i = 0; i < buyPurchaseAgainBtns.length; i++) {
+                buyPurchaseAgainBtns[i].addEventListener('click', async e => {
+                    let docId = e.target.value
+                    let p = carts[index].items.find(item => item.docId === docId)
+                    Array.apply(null, Array(p.qty)).forEach(_ => {
+                        p.qty = 1;
+                        cart.addItem(p)
+                    })
+                    MENU.CartItemCount.innerHTML = `${cart.getTotalQty()}`;
+                    modalTransaction.modal.hide();
+                    swal("Success!", "Product successfully added to cart!", "success");
+                })
+            }
         })
     }
 
@@ -100,6 +113,7 @@ function buildTransactionView(cart) {
         <th scope="col">Qty</th>
         <th scope="col">Sub-total</th>
         <th scope="col" width="50%">Summary</th>
+        <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -113,6 +127,7 @@ function buildTransactionView(cart) {
                <td>${p.qty}</td>
                <td>${Util.currency(p.price * p.qty)}</td>
                <td>${p.summary}</td>
+               <td><button style="width: max-content;" type="button" class="btn btn-primary buyPurchaseAgain" value="${p.docId}">Buy Again</button></td>
            </tr>
             `;
 

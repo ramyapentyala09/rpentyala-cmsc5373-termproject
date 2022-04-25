@@ -40,6 +40,7 @@ export class Product {
             imageName: this.imageName,
             imageURL: this.imageURL,
             qty: this.qty,
+            docId: this.docId
         }
     }
 

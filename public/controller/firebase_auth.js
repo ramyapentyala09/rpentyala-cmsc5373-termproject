@@ -1,6 +1,6 @@
 import {
     getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
-    createUserWithEmailAndPassword, updatePassword, reauthenticateWithCredential, EmailAuthProvider
+    createUserWithEmailAndPassword, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser
 } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js"
 
 import * as Elements from '../viewpage/elements.js'
@@ -40,32 +40,32 @@ export function addEventListeners() {
             Util.info('Signout Error', JSON.stringify(e));
         }
     });
-Elements.modalSignin.showSignupModal.addEventListener('click', () => {
-    Elements.modalSignin.modal.hide();
-    Elements.modalSignup.form.reset(); // clear form data
-    Elements.modalSignup.modal.show();
-});
+    Elements.modalSignin.showSignupModal.addEventListener('click', () => {
+        Elements.modalSignin.modal.hide();
+        Elements.modalSignup.form.reset(); // clear form data
+        Elements.modalSignup.modal.show();
+    });
 
-Elements.modalSignup.form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    const passwordConfirm = e.target.passwordConfirm.value;
-    if (password != passwordConfirm) {
-        window.alert('Two passwords do not match!');
-        return;
-    }
-    try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        Util.info('Account Created!', `You are now signed in as ${email}`, Elements.modalSignup.modal);
+    Elements.modalSignup.form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const passwordConfirm = e.target.passwordConfirm.value;
+        if (password != passwordConfirm) {
+            window.alert('Two passwords do not match!');
+            return;
+        }
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            Util.info('Account Created!', `You are now signed in as ${email}`, Elements.modalSignup.modal);
 
 
-    } catch (e) {
-        if (DEV) console.log(e);
-        Util.info('Failed to create account', JSON.stringify(e), Elements.modalSignup.modal)
+        } catch (e) {
+            if (DEV) console.log(e);
+            Util.info('Failed to create account', JSON.stringify(e), Elements.modalSignup.modal)
 
-    }
-});
+        }
+    });
 }
 async function authStateChanged(user) {
     currentUser = user;
@@ -109,4 +109,25 @@ export async function changePassword(data) {
     } catch ({ message }) {
         swal("Error!", message, "error");
     }
+}
+
+export async function deleteAccount(password) {
+    try {
+        let willDelete = await swal({
+            title: "Are you sure?",
+            text: "Do you want to delete your account!",
+            icon: "warning",
+            buttons: ["No", "Yes"],
+            dangerMode: true,
+        })
+        if (willDelete) {
+            let credentials = EmailAuthProvider.credential(currentUser.email, password);
+            await reauthenticateWithCredential(currentUser, credentials);
+            await deleteUser(currentUser);
+            document.querySelector("#modal-delete-user .btn-close").click();
+            swal("Success!", "Account Deleted Successfully!", "success");
+        }
+    } catch ({ message }) {
+        swal("Error!", message, "error");
+    } 
 }

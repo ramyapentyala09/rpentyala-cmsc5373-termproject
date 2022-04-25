@@ -9,6 +9,7 @@ import { checkout } from "../controller/firestore_controller.js";
 export function addEventListeners() {
     MENU.Cart.addEventListener('click', async () => {
         history.pushState(null, null, ROUTE_PATHNAMES.CART);
+        document.getElementById('productView').style.display = 'none'
         await cart_page();
     });
 }

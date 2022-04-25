@@ -178,11 +178,6 @@ export async function home_page() {
 
 }
 
-function getProductListBySearch(text, productList) {
-
-    return productList.filter(product => product.name.startsWith(text) || product.summary.startsWith(text));
-}
-
 async function getProductBySearching() {
     let html = '<h1>Enjoy Shopping!</h1>'
     root.innerHTML = loader
